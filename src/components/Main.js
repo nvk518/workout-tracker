@@ -5,9 +5,13 @@ import EditableTable from './EditableTable';
 const Main = () => {
   return (
     <Box sx={{ backgroundColor: '#dde6d5', minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-      <Box sx={{fontSize: "36px"}} mb={3} ml={10} textAlign="left">
-        Gymkhanna
-      </Box>
+      <AppBar position="static">
+                <Toolbar>
+                    <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                        Gymkhana
+                    </Typography>
+                </Toolbar>
+            </AppBar>
       <Box sx={{minWidth: "80%"}}>
         <EditableTable />
       </Box>

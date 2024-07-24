@@ -8,7 +8,12 @@ const axios = require('axios');
 
 const app = express();
 app.use(bodyParser.json());
-app.use(cors());
+
+// Configure CORS to allow requests from your frontend
+app.use(cors({
+  origin: process.env.FRONTEND_URL || '*', // Replace with your frontend URL
+  credentials: true,
+}));
 
 const uri = process.env.MONGODB_URL;
 const client = new MongoClient(uri, {
@@ -35,7 +40,7 @@ async function run() {
         const workouts = await collection.find({}).toArray();
         res.status(200).json(workouts);
       } catch (err) {
-        console.error(err);
+        console.error('Error fetching workouts:', err);
         res.status(500).json({ error: 'Internal server error' });
       }
     });
@@ -46,7 +51,7 @@ async function run() {
         const result = await collection.insertOne({ workout, user, date_edited, weight });
         res.status(201).json({ id: result.insertedId });
       } catch (err) {
-        console.error(err);
+        console.error('Error adding workout:', err);
         res.status(500).json({ error: 'Internal server error' });
       }
     });
@@ -69,10 +74,9 @@ async function run() {
         await collection.bulkWrite(bulkOps);
 
         const message = updates.map(update => (
-          `**${update.user}** just increased ${update.user == "Ria" ? "her" : "his"} **${update.workout}** from **${update.old_weight} lbs** to **${update.weight} lbs**!`
+          `**${update.user}** just increased ${update.user === "Ria" ? "her" : "his"} **${update.workout}** from **${update.old_weight} lbs** to **${update.weight} lbs**!`
         )).join('\n\n');
         
-
         let imageURL;
         if (message.includes("Ria") && message.includes("Neil")) {
           imageURL = "https://static.wikia.nocookie.net/kirby-fan-fiction/images/6/61/Yoshi_Kirby.png/revision/latest?cb=20200130190545";
@@ -81,7 +85,7 @@ async function run() {
         } else if (message.includes("Neil")) {
           imageURL = "https://d3gz42uwgl1r1y.cloudfront.net/ca/caseyljones/submission/2018/06/096617ad26f0a638e0d413b0b4a3dbc5/2500x1500.jpg";
         }
-        
+
         await axios.post(discordWebhookUrl, {
           content: `Workout Updates:\n\n${message}`,
           embeds: [
@@ -95,18 +99,18 @@ async function run() {
 
         res.status(200).json({ message: 'Workouts updated successfully' });
       } catch (err) {
-        console.error('Error during bulk write or Discord message creation: ', err);
+        console.error('Error during bulk write or Discord message creation:', err);
         res.status(500).json({ error: 'Internal server error' });
       }
     });
 
-    app.listen(3001, () => {
-      console.log('Server running on port 3001');
+    const port = process.env.PORT || 3001;
+    app.listen(port, () => {
+      console.log(`Server running on port ${port}`);
     });
   } finally {
-    // Ensures that the client will close when you finish/error
-    // Comment this line out to keep the server running
-    // await client.close();
+    // Keep the connection open, especially if the server is expected to handle continuous requests.
+    // await client.close(); // Uncomment if you want to close the connection after the script runs
   }
 }
 

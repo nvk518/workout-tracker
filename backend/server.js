@@ -33,7 +33,7 @@ async function run() {
     const collection = db.collection('workouts');
 
     // Get all workouts
-    app.get('/workouts', async (req, res) => {
+    app.get('/api/workouts', async (req, res) => {
       try {
         const workouts = await collection.find({}).toArray();
         res.status(200).json(workouts);
@@ -44,7 +44,7 @@ async function run() {
     });
 
     // Add a new workout
-    app.post('/workouts', async (req, res) => {
+    app.post('/api/workouts', async (req, res) => {
       const { workout, user, date_edited, weight } = req.body;
       try {
         const result = await collection.insertOne({ workout, user, date_edited, weight });
@@ -56,7 +56,7 @@ async function run() {
     });
 
     // Update multiple workouts and send a Discord message
-    app.post('/workouts/update', async (req, res) => {
+    app.post('/api/workouts/update', async (req, res) => {
       const updates = req.body;
       if (!Array.isArray(updates)) {
         return res.status(400).json({ error: 'Request body must be an array' });
@@ -73,15 +73,10 @@ async function run() {
 
         await collection.bulkWrite(bulkOps);
 
-        // const message = updates.map(update => (
-        //   `**Exercise:** ${update.workout}\n**User:** ${update.user}\n**Weight:** ${update.weight} lbs\n**Previous Weight:** ${update.old_weight} lbs`
-        // )).join('\n\n');
-
         const message = updates.map(update => (
           `**${update.user}** just increased ${update.user == "Ria" ? "her" : "his"} **${update.workout}** from **${update.old_weight} lbs** to **${update.weight} lbs**!`
         )).join('\n\n');
         
-
         let imageURL;
         if (message.includes("Ria") && message.includes("Neil")) {
           imageURL = "https://static.wikia.nocookie.net/kirby-fan-fiction/images/6/61/Yoshi_Kirby.png/revision/latest?cb=20200130190545";
@@ -90,7 +85,7 @@ async function run() {
         } else if (message.includes("Neil")) {
           imageURL = "https://d3gz42uwgl1r1y.cloudfront.net/ca/caseyljones/submission/2018/06/096617ad26f0a638e0d413b0b4a3dbc5/2500x1500.jpg";
         }
-        
+
         await axios.post(discordWebhookUrl, {
           content: `Workout Updates:\n\n${message}`,
           embeds: [
@@ -109,9 +104,6 @@ async function run() {
       }
     });
 
-    app.listen(3001, () => {
-      console.log('Server running on port 3001');
-    });
   } finally {
     // Ensures that the client will close when you finish/error
     // Comment this line out to keep the server running
@@ -120,3 +112,6 @@ async function run() {
 }
 
 run().catch(console.dir);
+
+// Export the express app as a Vercel serverless function
+module.exports = app;

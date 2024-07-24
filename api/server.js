@@ -34,6 +34,7 @@ async function run() {
 
     // Get all workouts
     app.get('/api/workouts', async (req, res) => {
+      console.log("checking /api/workouts")
       try {
         const workouts = await collection.find({}).toArray();
         res.status(200).json(workouts);

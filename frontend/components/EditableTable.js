@@ -22,7 +22,7 @@ const EditableTable = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const apiEndpoint = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
-
+  console.log(apiEndpoint);
   useEffect(() => {
     const fetchData = async () => {
       try {

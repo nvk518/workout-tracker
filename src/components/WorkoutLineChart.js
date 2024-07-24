@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { LineChart } from '@mui/x-charts/LineChart';
 import { Box, useMediaQuery, useTheme, Stack, Typography } from '@mui/material';
 

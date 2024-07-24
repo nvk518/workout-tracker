@@ -42,6 +42,7 @@ const EditableTable = () => {
   }, []);
 
   const getAllExercises = (data) => {
+    console.log(data);
     const allExercises = data.map(d => d.workout);
     const uniqueExercises = [...new Set(allExercises)];
     return uniqueExercises;

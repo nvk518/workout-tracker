@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { LineChart } from '@mui/x-charts/LineChart';
-import { Box, useMediaQuery, useTheme, Stack, Typography, FormControlLabel, Checkbox } from '@mui/material';
+import { Box, useMediaQuery, useTheme, Stack, Typography } from '@mui/material';
 
 const WorkoutLineChart = ({ workoutData }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const [connectNulls, setConnectNulls] = useState(true);
+  // eslint-disable-next-line
+  const connectNulls = true;
 
   if (!workoutData || !workoutData.NeilHistory || !workoutData.RiaHistory) {
     return <Box>Click on an exercise to view data</Box>;

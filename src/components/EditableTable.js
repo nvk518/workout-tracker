@@ -13,7 +13,8 @@ import WorkoutLineChart from './WorkoutLineChart';
 const EditableTable = () => {
   const [workouts, setWorkouts] = useState([]);
   const [editData, setEditData] = useState({});
-  const [exercises, setExercises] = useState([]);
+  // eslint-disable-next-line
+  // const [exercises, setExercises] = useState([]);
   const [loading, setLoading] = useState(true);
   const [newExercise, setNewExercise] = useState({ exercise: '', Neil: '', Ria: '' });
   const [page, setPage] = useState(0);
@@ -27,7 +28,7 @@ const EditableTable = () => {
         const response = await axios.get('http://localhost:3001/workouts');
         const allExercises = getAllExercises(response.data);
         const latestWorkouts = getLatestWorkouts(response.data, allExercises);
-        setExercises(allExercises);
+        // setExercises(allExercises);
         setWorkouts(latestWorkouts);
         setEditData(formatEditData(latestWorkouts));
         setLoading(false);
@@ -124,7 +125,7 @@ const EditableTable = () => {
       const response = await axios.get('http://localhost:3001/workouts');
       const allExercises = getAllExercises(response.data);
       const latestWorkouts = getLatestWorkouts(response.data, allExercises);
-      setExercises(allExercises);
+      // setExercises(allExercises);
       setWorkouts(latestWorkouts);
       console.log("last:", allExercises, latestWorkouts);
       setEditData(formatEditData(latestWorkouts));
@@ -163,7 +164,7 @@ const EditableTable = () => {
       const response = await axios.get('http://localhost:3001/workouts');
       const allExercises = getAllExercises(response.data);
       const latestWorkouts = getLatestWorkouts(response.data, allExercises);
-      setExercises(allExercises);
+      // setExercises(allExercises);
       setWorkouts(latestWorkouts);
       setEditData(formatEditData(latestWorkouts));
       setNewExercise({ exercise: '', Neil: '', Ria: '' });  // Reset new exercise fields

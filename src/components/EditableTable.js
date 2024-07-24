@@ -21,12 +21,12 @@ const EditableTable = () => {
   const [selectedWorkout, setSelectedWorkout] = useState(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
-  const apiEndpoint = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
+  const apiEndpoint = process.env.REACT_APP_API_URL || 'http://localhost:3001/';
   console.log(apiEndpoint);
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${apiEndpoint}/workouts`);
+        const response = await axios.get(`${apiEndpoint}api/workouts`);
         const allExercises = getAllExercises(response.data);
         const latestWorkouts = getLatestWorkouts(response.data, allExercises);
         setExercises(allExercises);
@@ -121,9 +121,9 @@ const EditableTable = () => {
       }
       console.log(updates)
       if (updates.length > 0) {
-        await axios.post(`${apiEndpoint}/workouts/update`, updates);
+        await axios.post(`${apiEndpoint}api/workouts/update`, updates);
       }
-      const response = await axios.get(`${apiEndpoint}/workouts`);
+      const response = await axios.get(`${apiEndpoint}api/workouts`);
       const allExercises = getAllExercises(response.data);
       const latestWorkouts = getLatestWorkouts(response.data, allExercises);
       setExercises(allExercises);
@@ -160,9 +160,9 @@ const EditableTable = () => {
         date_edited: new Date().toISOString(),
         weight: newExercise.Ria
       };
-      await axios.post(`${apiEndpoint}/workouts`, newNeilData);
-      await axios.post(`${apiEndpoint}/workouts`, newRiaData);
-      const response = await axios.get(`${apiEndpoint}/workouts`);
+      await axios.post(`${apiEndpoint}api/workouts`, newNeilData);
+      await axios.post(`${apiEndpoint}api/workouts`, newRiaData);
+      const response = await axios.get(`${apiEndpoint}api/workouts`);
       const allExercises = getAllExercises(response.data);
       const latestWorkouts = getLatestWorkouts(response.data, allExercises);
       setExercises(allExercises);

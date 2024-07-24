@@ -21,10 +21,12 @@ const EditableTable = () => {
   const [selectedWorkout, setSelectedWorkout] = useState(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
+  const apiEndpoint = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/workouts');
+        const response = await axios.get(`${apiEndpoint}/workouts`);
         const allExercises = getAllExercises(response.data);
         const latestWorkouts = getLatestWorkouts(response.data, allExercises);
         setExercises(allExercises);
@@ -119,9 +121,9 @@ const EditableTable = () => {
       }
       console.log(updates)
       if (updates.length > 0) {
-        await axios.post('http://localhost:3001/workouts/update', updates);
+        await axios.post(`${apiEndpoint}/workouts/update`, updates);
       }
-      const response = await axios.get('http://localhost:3001/workouts');
+      const response = await axios.get(`${apiEndpoint}/workouts`);
       const allExercises = getAllExercises(response.data);
       const latestWorkouts = getLatestWorkouts(response.data, allExercises);
       setExercises(allExercises);
@@ -158,9 +160,9 @@ const EditableTable = () => {
         date_edited: new Date().toISOString(),
         weight: newExercise.Ria
       };
-      await axios.post('http://localhost:3001/workouts', newNeilData);
-      await axios.post('http://localhost:3001/workouts', newRiaData);
-      const response = await axios.get('http://localhost:3001/workouts');
+      await axios.post(`${apiEndpoint}/workouts`, newNeilData);
+      await axios.post(`${apiEndpoint}/workouts`, newRiaData);
+      const response = await axios.get(`${apiEndpoint}/workouts`);
       const allExercises = getAllExercises(response.data);
       const latestWorkouts = getLatestWorkouts(response.data, allExercises);
       setExercises(allExercises);

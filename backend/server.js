@@ -2,15 +2,15 @@ require('dotenv').config(); // Load environment variables at the very beginning
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const cors = require('cors'); // Import the CORS middleware
+const cors = require('cors');
 const { MongoClient, ObjectId, ServerApiVersion } = require('mongodb');
 const axios = require('axios');
 
 const app = express();
 app.use(bodyParser.json());
-app.use(cors()); // Use the CORS middleware
+app.use(cors());
 
-const uri = process.env.MONGODB_URL; // Use the environment variable for the MongoDB URL
+const uri = process.env.MONGODB_URL;
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
@@ -19,20 +19,17 @@ const client = new MongoClient(uri, {
   }
 });
 
-const discordWebhookUrl = process.env.DISCORD_WEBHOOK_URL; // Use the environment variable for the Discord Webhook URL
+const discordWebhookUrl = process.env.DISCORD_WEBHOOK_URL;
 
 async function run() {
   try {
-    // Connect the client to the server
     await client.connect();
-    // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
 
     const db = client.db('workout_tracker');
     const collection = db.collection('workouts');
 
-    // Get all workouts
     app.get('/workouts', async (req, res) => {
       try {
         const workouts = await collection.find({}).toArray();
@@ -43,7 +40,6 @@ async function run() {
       }
     });
 
-    // Add a new workout
     app.post('/workouts', async (req, res) => {
       const { workout, user, date_edited, weight } = req.body;
       try {
@@ -55,7 +51,6 @@ async function run() {
       }
     });
 
-    // Update multiple workouts and send a Discord message
     app.post('/workouts/update', async (req, res) => {
       const updates = req.body;
       if (!Array.isArray(updates)) {
@@ -72,10 +67,6 @@ async function run() {
         }));
 
         await collection.bulkWrite(bulkOps);
-
-        // const message = updates.map(update => (
-        //   `**Exercise:** ${update.workout}\n**User:** ${update.user}\n**Weight:** ${update.weight} lbs\n**Previous Weight:** ${update.old_weight} lbs`
-        // )).join('\n\n');
 
         const message = updates.map(update => (
           `**${update.user}** just increased ${update.user == "Ria" ? "her" : "his"} **${update.workout}** from **${update.old_weight} lbs** to **${update.weight} lbs**!`

@@ -3,7 +3,7 @@ import axios from 'axios';
 import {
   Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Paper,
   TextField, Button, Box, Accordion, AccordionSummary, AccordionDetails, Typography,
-  Dialog, DialogTitle, DialogContent, DialogActions, useMediaQuery, useTheme
+  Dialog, DialogTitle, DialogContent, DialogActions, useMediaQuery, useTheme, Stack
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import EditIcon from '@mui/icons-material/Edit';
@@ -273,11 +273,27 @@ const EditableTable = () => {
             Add Exercise
           </Button>
         </Box>
+        <Stack>
+        <Box mt={2} textAlign="center">
+          <input
+            accept="image/*"
+            style={{ display: 'none' }}
+            id="raised-button-file"
+            multiple
+            type="file"
+          />
+            <label htmlFor="raised-button-file">
+              <Button variant="raised" component="span">
+                Upload
+              </Button>
+            </label> 
+        </Box>
         <Box p={2} textAlign="center">
           <Button variant="contained" color="success" onClick={handleSave} startIcon={<SaveIcon />} sx={{ width: '50%' }}>
             Save Changes
           </Button>
         </Box>
+        </Stack>
       </Paper>
 
       <Dialog open={isAddModalOpen} onClose={closeAddModal}>

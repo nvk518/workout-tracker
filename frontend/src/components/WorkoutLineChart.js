@@ -84,8 +84,8 @@ const WorkoutLineChart = ({ workoutData }) => {
           width={isMobile ? 300 : 500}
           height={isMobile ? 200 : 300}
           series={[
-            { data: neilSeriesData, label: 'Neil', connectNulls, valueFormatter: (value) => (value == null ? 'NaN' : value.toString()) },
-            { data: riaSeriesData, label: 'Ria', connectNulls, valueFormatter: (value) => (value == null ? 'NaN' : value.toString()) },
+            { data: neilSeriesData, label: 'Neil', connectNulls, valueFormatter: (value) => (value == null ? '-' : value.toString()) },
+            { data: riaSeriesData, label: 'Ria', connectNulls, valueFormatter: (value) => (value == null ? '-' : value.toString()) },
           ]}
           xAxis={[{ scaleType: 'point', data: xLabels }]}
         />

@@ -22,7 +22,7 @@ const WorkoutLineChart = ({ workoutData }) => {
     const dateMap = {};
     history.forEach(d => {
       const date = new Date(d.date_edited).toISOString().split('T')[0]; // Ensure consistent date format
-      if (!dateMap[date] || d.weight > dateMap[date]) {
+      if (!dateMap[date] || (Number(d.weight) > Number(dateMap[date]))) {
         dateMap[date] = d.weight;
       }
     });
@@ -36,12 +36,22 @@ const WorkoutLineChart = ({ workoutData }) => {
     neilData = processHistory(workoutData.NeilHistory);
     riaData = processHistory(workoutData.RiaHistory);
 
-    const allDates = [
-      ...new Set([
-        ...neilData.map(d => d.x),
-        ...riaData.map(d => d.x)
-      ])
-    ].sort((a, b) => new Date(a) - new Date(b));
+    // Get the earliest and latest date across both datasets
+    const startDate = new Date(Math.min(
+      ...neilData.map(d => new Date(d.x)),
+      ...riaData.map(d => new Date(d.x))
+    ));
+
+    const endDate = new Date(Math.max(
+      ...neilData.map(d => new Date(d.x)),
+      ...riaData.map(d => new Date(d.x))
+    ));
+
+    // Generate all dates between startDate and endDate
+    const allDates = [];
+    for (let d = startDate; d <= endDate; d.setDate(d.getDate() + 1)) {
+      allDates.push(new Date(d).toISOString().split('T')[0]);
+    }
 
     xLabels = allDates;
 
@@ -54,9 +64,6 @@ const WorkoutLineChart = ({ workoutData }) => {
     neilSeriesData = createSeriesData(neilData, xLabels);
     riaSeriesData = createSeriesData(riaData, xLabels);
 
-    // console.log("Neil Data:", neilSeriesData);
-    // console.log("Ria Data:", riaSeriesData);
-    // console.log("workout:", workoutData);
   } catch (error) {
     console.log(error);
     return <Box>Click on an exercise to view data</Box>;

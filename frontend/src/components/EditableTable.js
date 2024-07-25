@@ -30,7 +30,6 @@ const EditableTable = () => {
         const response = await axios.get(`${API_BASE_URL}/workouts`);
         const allExercises = getAllExercises(response.data);
         const latestWorkouts = getLatestWorkouts(response.data, allExercises);
-        // setExercises(allExercises);
         setWorkouts(latestWorkouts);
         setEditData(formatEditData(latestWorkouts));
         setLoading(false);
@@ -238,7 +237,7 @@ const EditableTable = () => {
                       <AccordionDetails>
                         <Typography variant="body2" style={{ marginTop: '10px' }}>
                           <strong>Ria's Progress:</strong>
-                          {workout.RiaHistory.map((entry, index) => (entry.weight !== "" && entry.weight !== "0") ? (
+                          {workout.RiaHistory.slice(0,10).map((entry, index) => (entry.weight !== "" && entry.weight !== "0") ? (
                             <div key={index}>
                               {new Date(entry.date_edited).toLocaleDateString()}: {entry.weight} lbs
                             </div>
@@ -246,7 +245,7 @@ const EditableTable = () => {
                         </Typography>
                         <Typography variant="body2">
                           <strong>Neil's Progress:</strong>
-                          {workout.NeilHistory.map((entry, index) => (entry.weight !== "" && entry.weight !== "0") ? (
+                          {workout.NeilHistory.slice(0,10).map((entry, index) => (entry.weight !== "" && entry.weight !== "0") ? (
                             <div key={index}>
                               {new Date(entry.date_edited).toLocaleDateString()}: {entry.weight} lbs
                             </div>

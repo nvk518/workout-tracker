@@ -11,7 +11,7 @@ app.use(bodyParser.json());
 
 // Configure CORS to allow requests from your frontend
 app.use(cors({
-  origin: process.env.FRONTEND_URL || '*', // Replace with your frontend URL
+  origin: process.env.FRONTEND_URL || 'http://localhost:1344', // Replace with your frontend URL
   credentials: true,
 }));
 

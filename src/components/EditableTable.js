@@ -21,7 +21,7 @@ const EditableTable = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [selectedWorkout, setSelectedWorkout] = useState(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const API_BASE_URL = 'https://workout-tracker-hdq7.onrender.com/';
+  const API_BASE_URL = 'https://workout-tracker-hdq7.onrender.com';
 
   useEffect(() => {
     const fetchData = async () => {

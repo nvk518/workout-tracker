@@ -21,11 +21,12 @@ const EditableTable = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [selectedWorkout, setSelectedWorkout] = useState(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const API_BASE_URL = 'https://workout-tracker-hdq7.onrender.com/';
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/workouts');
+        const response = await axios.get(`${API_BASE_URL}/workouts`);
         const allExercises = getAllExercises(response.data);
         const latestWorkouts = getLatestWorkouts(response.data, allExercises);
         // setExercises(allExercises);
@@ -120,9 +121,9 @@ const EditableTable = () => {
       }
       console.log(updates)
       if (updates.length > 0) {
-        await axios.post('http://localhost:3001/workouts/update', updates);
+        await axios.post(`${API_BASE_URL}/workouts/update`, updates);
       }
-      const response = await axios.get('http://localhost:3001/workouts');
+      const response = await axios.get(`${API_BASE_URL}/workouts`);
       const allExercises = getAllExercises(response.data);
       const latestWorkouts = getLatestWorkouts(response.data, allExercises);
       // setExercises(allExercises);
@@ -159,9 +160,9 @@ const EditableTable = () => {
         date_edited: new Date().toISOString(),
         weight: newExercise.Ria
       };
-      await axios.post('http://localhost:3001/workouts', newNeilData);
-      await axios.post('http://localhost:3001/workouts', newRiaData);
-      const response = await axios.get('http://localhost:3001/workouts');
+      await axios.post(`${API_BASE_URL}/workouts`, newNeilData);
+      await axios.post(`${API_BASE_URL}/workouts`, newRiaData);
+      const response = await axios.get(`${API_BASE_URL}/workouts`);
       const allExercises = getAllExercises(response.data);
       const latestWorkouts = getLatestWorkouts(response.data, allExercises);
       // setExercises(allExercises);

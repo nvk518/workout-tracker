@@ -14,7 +14,7 @@ const EditableTable = () => {
   const [workouts, setWorkouts] = useState([]);
   const [editData, setEditData] = useState({});
   // eslint-disable-next-line
-  // const [exercises, setExercises] = useState([]);
+  const [exercises, setExercises] = useState([]);
   const [loading, setLoading] = useState(true);
   const [newExercise, setNewExercise] = useState({ exercise: '', Neil: '', Ria: '' });
   const [page, setPage] = useState(0);
@@ -22,6 +22,7 @@ const EditableTable = () => {
   const [selectedWorkout, setSelectedWorkout] = useState(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const API_BASE_URL = 'https://workout-tracker-hdq7.onrender.com';
+  // const API_BASE_URL = 'http://localhost:3001';
 
   useEffect(() => {
     const fetchData = async () => {
@@ -53,7 +54,6 @@ const EditableTable = () => {
       const workout = { exercise };
       // console.log("workout:", workout, data);
       users.forEach(user => {
-
         const userData = data.filter(d => d.workout === exercise && d.user === user);
         // console.log("userData:", userData)
         userData.sort((a, b) => new Date(b.date_edited) - new Date(a.date_edited));
@@ -77,7 +77,6 @@ const EditableTable = () => {
         Ria: workout.Ria
       };
     });
-    console.log("formatEditData:", editData)
     return editData;
   };
 
@@ -102,39 +101,34 @@ const EditableTable = () => {
             workout: exercise,
             user: 'Neil',
             date_edited: new Date().toISOString(),
-            weight: editData[exercise].Neil,
-            old_weight: workout.Neil
+            weight: editData[exercise].Neil
           };
           const riaData = {
             workout: exercise,
             user: 'Ria',
             date_edited: new Date().toISOString(),
-            weight: editData[exercise].Ria,
-            old_weight: workout.Ria
+            weight: editData[exercise].Ria
           };
-          console.log("editData:", editData[exercise].Neil, workout.Neil, editData[exercise].Ria, workout.Ria)
           if (editData[exercise].Neil !== workout.Neil)
             updates.push(neilData);
           if (editData[exercise].Ria !== workout.Ria)
             updates.push(riaData);
         }
       }
-      console.log(updates)
       if (updates.length > 0) {
         await axios.post(`${API_BASE_URL}/workouts/update`, updates);
       }
       const response = await axios.get(`${API_BASE_URL}/workouts`);
       const allExercises = getAllExercises(response.data);
       const latestWorkouts = getLatestWorkouts(response.data, allExercises);
-      // setExercises(allExercises);
+      setExercises(allExercises);
       setWorkouts(latestWorkouts);
-      console.log("last:", allExercises, latestWorkouts);
       setEditData(formatEditData(latestWorkouts));
     } catch (error) {
       console.error('Error saving workouts:', error);
     }
   };
-
+  
   const handleNewExerciseChange = (field, value) => {
     setNewExercise(prevState => ({
       ...prevState,
@@ -165,7 +159,7 @@ const EditableTable = () => {
       const response = await axios.get(`${API_BASE_URL}/workouts`);
       const allExercises = getAllExercises(response.data);
       const latestWorkouts = getLatestWorkouts(response.data, allExercises);
-      // setExercises(allExercises);
+      setExercises(allExercises);
       setWorkouts(latestWorkouts);
       setEditData(formatEditData(latestWorkouts));
       setNewExercise({ exercise: '', Neil: '', Ria: '' });  // Reset new exercise fields

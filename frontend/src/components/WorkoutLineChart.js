@@ -54,9 +54,9 @@ const WorkoutLineChart = ({ workoutData }) => {
     neilSeriesData = createSeriesData(neilData, xLabels);
     riaSeriesData = createSeriesData(riaData, xLabels);
 
-    console.log("Neil Data:", neilSeriesData);
-    console.log("Ria Data:", riaSeriesData);
-    console.log("workout:", workoutData);
+    // console.log("Neil Data:", neilSeriesData);
+    // console.log("Ria Data:", riaSeriesData);
+    // console.log("workout:", workoutData);
   } catch (error) {
     console.log(error);
     return <Box>Click on an exercise to view data</Box>;

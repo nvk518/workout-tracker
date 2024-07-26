@@ -131,9 +131,9 @@ async function run() {
         }));
         
         await collection.bulkWrite(bulkOps);
-
+        const measurement = /Run|Running/i.test(update.workout) ? 'mi' : 'lbs'
         const message = updates.map(update => (
-          `**${update.user}** just increased ${update.user == "Ria" ? "her" : "his"} **${update.workout}** from **${update.old_weight} lbs** to **${update.weight} lbs**!`
+          `**${update.user}** just increased ${update.user == "Ria" ? "her" : "his"} **${update.workout}** from **${update.old_weight} ${measurement}** to **${update.weight} ${measurement}**!`
         )).join('\n\n');
         let imageURL;
         if (message.includes("Ria") && message.includes("Neil")) {

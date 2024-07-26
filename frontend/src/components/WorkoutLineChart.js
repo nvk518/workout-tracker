@@ -139,30 +139,30 @@ const WorkoutLineChart = ({ workoutData }) => {
               <TableHead>
                 <TableRow>
                   <TableCell>Statistic</TableCell>
-                  <TableCell>Neil</TableCell>
                   <TableCell>Ria</TableCell>
+                  <TableCell>Neil</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 <TableRow>
                   <TableCell>Mean</TableCell>
-                  <TableCell>{neilMean.toFixed(2)}</TableCell>
                   <TableCell>{riaMean.toFixed(2)}</TableCell>
+                  <TableCell>{neilMean.toFixed(2)}</TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell>Median</TableCell>
-                  <TableCell>{neilMedian.toFixed(2)}</TableCell>
                   <TableCell>{riaMedian.toFixed(2)}</TableCell>
+                  <TableCell>{neilMedian.toFixed(2)}</TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell>Std Dev</TableCell>
-                  <TableCell>{neilStd.toFixed(2)}</TableCell>
                   <TableCell>{riaStd.toFixed(2)}</TableCell>
+                  <TableCell>{neilStd.toFixed(2)}</TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell>Increase</TableCell>
-                  <TableCell>{neilRange.toFixed(2)}</TableCell>
                   <TableCell>{riaRange.toFixed(2)}</TableCell>
+                  <TableCell>{neilRange.toFixed(2)}</TableCell>
                 </TableRow>
               </TableBody>
             </Table>

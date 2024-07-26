@@ -275,7 +275,7 @@ const EditableTable = ({ onShowAlert }) => {
                           <strong>Ria's Progress:</strong>
                           {workout.RiaHistory.slice(0,10).map((entry, index) => (entry.weight !== "" && entry.weight !== "0") ? (
                             <div key={index}>
-                              {new Date(entry.date_edited).toLocaleDateString()}: {entry.weight} lbs
+                              {new Date(entry.date_edited).toLocaleDateString()}: {entry.weight} {/Run|Running/i.test(workout.exercise) ? 'mi' : 'lbs'}
                             </div>
                           ) : "")}
                         </Typography>
@@ -283,7 +283,7 @@ const EditableTable = ({ onShowAlert }) => {
                           <strong>Neil's Progress:</strong>
                           {workout.NeilHistory.slice(0,10).map((entry, index) => (entry.weight !== "" && entry.weight !== "0") ? (
                             <div key={index}>
-                              {new Date(entry.date_edited).toLocaleDateString()}: {entry.weight} lbs
+                              {new Date(entry.date_edited).toLocaleDateString()}: {entry.weight} {/Run|Running/i.test(workout.exercise) ? 'mi' : 'lbs'}
                             </div>
                           ) : "")}
                         </Typography>

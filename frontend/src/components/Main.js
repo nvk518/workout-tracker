@@ -1,11 +1,30 @@
-import { Box, Typography, AppBar, Toolbar, IconButton, Tooltip } from '@mui/material';
-import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';import React from 'react';
+import { Box, Typography, AppBar, Toolbar, IconButton, Tooltip, Snackbar, Alert } from '@mui/material';
+import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
+import React, { useState } from 'react';
 import EditableTable from './EditableTable';
 
 
 const Main = () => {
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('test!');
+  const [alertSeverity, setAlertSeverity] = useState('success');
+
+  const handleOpenAlert = (message, severity = 'success') => {
+    setAlertMessage(message);
+    setAlertSeverity(severity);
+    setAlertOpen(true);
+  };
+
+  const handleCloseAlert = () => {
+    setAlertOpen(false);
+  };
   return (
     <Box sx={{ backgroundColor: '#dde6d5'}}>
+      <Snackbar open={alertOpen} autoHideDuration={6000} onClose={handleCloseAlert}>
+        <Alert onClose={handleCloseAlert} severity={alertSeverity}>
+          {alertMessage}
+        </Alert>
+      </Snackbar>
       <AppBar position="static">
         <Toolbar sx={{ backgroundColor: '#dde6d5'}}>
           <IconButton
@@ -27,7 +46,7 @@ const Main = () => {
         </Toolbar>
       </AppBar>
       <Box sx={{minWidth: "80%"}}>
-        <EditableTable />
+        <EditableTable onShowAlert={handleOpenAlert} />
       </Box>
       <Box sx={{ backgroundColor: '#dde6d5', p: 2, mt: 2, textAlign: 'center' }}>
         <Typography variant="body2" color="textSecondary">

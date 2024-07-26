@@ -1,16 +1,17 @@
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
   Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Paper,
   TextField, Button, Box, Accordion, AccordionSummary, AccordionDetails, Typography,
-  Dialog, DialogTitle, DialogContent, DialogActions, useMediaQuery, useTheme, Stack
+  Dialog, DialogTitle, DialogContent, Backdrop, CircularProgress, DialogActions, useMediaQuery, useTheme, Stack
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import WorkoutLineChart from './WorkoutLineChart';
 
-const EditableTable = () => {
+const EditableTable = ({ onShowAlert }) => {
   const [workouts, setWorkouts] = useState([]);
   const [editData, setEditData] = useState({});
   // eslint-disable-next-line
@@ -21,9 +22,9 @@ const EditableTable = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [selectedWorkout, setSelectedWorkout] = useState(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [file, setFile] = useState(null);
+  // const API_BASE_URL = 'https://perfect-dog-supposedly.ngrok-free.app';
   const API_BASE_URL = 'https://workout-tracker-hdq7.onrender.com';
-  // const API_BASE_URL = 'http://localhost:3001';
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -35,6 +36,7 @@ const EditableTable = () => {
         setLoading(false);
       } catch (error) {
         console.error('Error fetching data:', error);
+        onShowAlert('Error fetching data.', 'error');
       }
     };
 
@@ -51,10 +53,8 @@ const EditableTable = () => {
     const users = ['Neil', 'Ria'];
     const latestWorkouts = exercises.map(exercise => {
       const workout = { exercise };
-      // console.log("workout:", workout, data);
       users.forEach(user => {
         const userData = data.filter(d => d.workout === exercise && d.user === user);
-        // console.log("userData:", userData)
         userData.sort((a, b) => new Date(b.date_edited) - new Date(a.date_edited));
   
         const latestEntry = userData.length > 0 ? userData[0] : { weight: '' };
@@ -100,13 +100,15 @@ const EditableTable = () => {
             workout: exercise,
             user: 'Neil',
             date_edited: new Date().toISOString(),
-            weight: editData[exercise].Neil
+            weight: editData[exercise].Neil,
+            old_weight: workout.Neil
           };
           const riaData = {
             workout: exercise,
             user: 'Ria',
             date_edited: new Date().toISOString(),
-            weight: editData[exercise].Ria
+            weight: editData[exercise].Ria,
+            old_weight: workout.Ria
           };
           if (editData[exercise].Neil !== workout.Neil)
             updates.push(neilData);
@@ -116,6 +118,11 @@ const EditableTable = () => {
       }
       if (updates.length > 0) {
         await axios.post(`${API_BASE_URL}/workouts/update`, updates);
+        onShowAlert('Workouts saved successfully!', 'success');
+      
+      }
+      if (file) {
+        await handleUpload(file);
       }
       const response = await axios.get(`${API_BASE_URL}/workouts`);
       const allExercises = getAllExercises(response.data);
@@ -125,9 +132,27 @@ const EditableTable = () => {
       setEditData(formatEditData(latestWorkouts));
     } catch (error) {
       console.error('Error saving workouts:', error);
+      onShowAlert('Error saving workouts.', 'error');
     }
   };
-  
+
+  const handleUpload = async (file) => {
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+      const response = await axios.post(`${API_BASE_URL}/upload`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      console.log('File uploaded successfully:', response.data);
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      onShowAlert('Error uploading file.', 'error');
+    }
+  };
+
   const handleNewExerciseChange = (field, value) => {
     setNewExercise(prevState => ({
       ...prevState,
@@ -136,7 +161,6 @@ const EditableTable = () => {
   };
 
   const handleAddExercise = async () => {
-    console.log("adding new exercise...");
     if (newExercise.exercise === "") {
       return;
     }
@@ -155,6 +179,7 @@ const EditableTable = () => {
       };
       await axios.post(`${API_BASE_URL}/workouts`, newNeilData);
       await axios.post(`${API_BASE_URL}/workouts`, newRiaData);
+      onShowAlert('New workout added successfully!', 'success');
       const response = await axios.get(`${API_BASE_URL}/workouts`);
       const allExercises = getAllExercises(response.data);
       const latestWorkouts = getLatestWorkouts(response.data, allExercises);
@@ -165,6 +190,7 @@ const EditableTable = () => {
       setIsAddModalOpen(false); // Close the modal after adding
     } catch (error) {
       console.error('Error adding new exercise:', error);
+      onShowAlert('Error adding new exercise.', 'error');
     }
   };
 
@@ -193,13 +219,19 @@ const EditableTable = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  // if (loading) {
+  //   return <div>Loading...</div>;
+  // }
 
   return (
-    <>
-      <Paper sx={{ width: '100%', overflow: 'hidden', p: isMobile ? 1 : 2 }}>
+      <>
+        <Backdrop
+          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={loading}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
+        <Paper sx={{ width: '100%', overflow: 'hidden', p: isMobile ? 1 : 2 }}>
         {<WorkoutLineChart workoutData={selectedWorkout} />}
         <TableContainer sx={{ maxHeight: 440, width: '100%' }}>
           <Table stickyHeader aria-label="sticky table">
@@ -220,14 +252,18 @@ const EditableTable = () => {
                       value={editData[workout.exercise]?.Ria || ''}
                       onChange={(e) => handleChange(workout.exercise, 'Ria', e.target.value)}
                       sx={{ width: "150px" }}
+                      variant="standard"
+                      label={/Run|Running/i.test(workout.exercise) ? 'Distance (mi)' : 'Weight (lbs)'}
                     />
                   </TableCell>
                   <TableCell>
-                    <TextField
-                      value={editData[workout.exercise]?.Neil || ''}
-                      onChange={(e) => handleChange(workout.exercise, 'Neil', e.target.value)}
-                      sx={{ width: "150px" }}
-                    />
+                  <TextField
+                    value={editData[workout.exercise]?.Neil || ''}
+                    onChange={(e) => handleChange(workout.exercise, 'Neil', e.target.value)}
+                    sx={{ width: "150px" }}
+                    variant="standard"
+                    label={/Run|Running/i.test(workout.exercise) ? 'Distance (mi)' : 'Weight (lbs)'}
+                  />
                   </TableCell>
                   <TableCell>
                     <Accordion>
@@ -274,25 +310,26 @@ const EditableTable = () => {
           </Button>
         </Box>
         <Stack>
-        <Box mt={2} textAlign="center">
-          <input
-            accept="image/*"
-            style={{ display: 'none' }}
-            id="raised-button-file"
-            multiple
-            type="file"
-          />
+          <Box mt={2} textAlign="center">
+            <input
+              accept="image/*"
+              style={{ display: 'none' }}
+              id="raised-button-file"
+              multiple
+              type="file"
+              onChange={(e) => setFile(e.target.files[0])}
+            />
             <label htmlFor="raised-button-file">
-              <Button variant="raised" component="span">
+              <Button variant="raised" component="span" sx={{ width: '50%' }}>
                 Upload
               </Button>
             </label> 
-        </Box>
-        <Box p={2} textAlign="center">
-          <Button variant="contained" color="success" onClick={handleSave} startIcon={<SaveIcon />} sx={{ width: '50%' }}>
-            Save Changes
-          </Button>
-        </Box>
+          </Box>
+          <Box p={2} textAlign="center">
+            <Button variant="contained" color="success" onClick={handleSave} startIcon={<SaveIcon />} sx={{ width: '50%' }}>
+              Save Changes
+            </Button>
+          </Box>
         </Stack>
       </Paper>
 

@@ -3,20 +3,22 @@ require('dotenv').config(); // Load environment variables at the very beginning
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const { MongoClient, ObjectId, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion } = require('mongodb');
 const axios = require('axios');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 
 const app = express();
 app.use(bodyParser.json());
 
-// Configure CORS to allow requests from your frontend
 app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:1344', // Replace with your frontend URL
   // origin: 'http://localhost:1344',
   credentials: true,
 }));
 
-const uri = process.env.MONGODB_URL; // Use the environment variable for the MongoDB URL
+const uri = process.env.MONGODB_URL;
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
@@ -25,18 +27,63 @@ const client = new MongoClient(uri, {
   }
 });
 
-const discordWebhookUrl = process.env.DISCORD_WEBHOOK_URL; // Use the environment variable for the Discord Webhook URL
+const discordWebhookUrl = process.env.DISCORD_WEBHOOK_URL;
+
+const uploadDir = 'uploads/';
+if (!fs.existsSync(uploadDir)){
+  fs.mkdirSync(uploadDir);
+}
+
+// Set up storage and file naming for uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({ storage });
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 
 async function run() {
   try {
-    // Connect the client to the server
     await client.connect();
-    // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
 
     const db = client.db('workout_tracker');
     const collection = db.collection('workouts');
+
+    app.post('/upload', upload.single('image'), async (req, res) => {
+      try {
+        if (!req.file) {
+          return res.status(400).json({ error: 'No file uploaded' });
+        }
+
+        const image = req.file;
+        const imageUrl = `${req.protocol}://${req.get('host')}/uploads/${image.filename}`;
+
+        await axios.post(discordWebhookUrl, {
+          content: `RAHHHH.`,
+          embeds: [
+            {
+              image: {
+                url: imageUrl
+              }
+            }
+          ]
+        });
+
+        res.status(200).json({ message: 'File uploaded successfully', url: imageUrl });
+      } catch (err) {
+        console.error('Error uploading file:', err);
+        res.status(500).json({ error: 'Internal server error' });
+      }
+    });
 
     // Get all workouts
     app.get('/workouts', async (req, res) => {
@@ -85,15 +132,9 @@ async function run() {
         
         await collection.bulkWrite(bulkOps);
 
-        // const message = updates.map(update => (
-        //   `**Exercise:** ${update.workout}\n**User:** ${update.user}\n**Weight:** ${update.weight} lbs\n**Previous Weight:** ${update.old_weight} lbs`
-        // )).join('\n\n');
-
         const message = updates.map(update => (
           `**${update.user}** just increased ${update.user == "Ria" ? "her" : "his"} **${update.workout}** from **${update.old_weight} lbs** to **${update.weight} lbs**!`
         )).join('\n\n');
-        
-
         let imageURL;
         if (message.includes("Ria") && message.includes("Neil")) {
           imageURL = "https://static.wikia.nocookie.net/kirby-fan-fiction/images/6/61/Yoshi_Kirby.png/revision/latest?cb=20200130190545";

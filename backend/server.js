@@ -68,7 +68,7 @@ async function run() {
         const imageUrl = `${req.protocol}://${req.get('host')}/uploads/${image.filename}`;
 
         await axios.post(discordWebhookUrl, {
-          content: `RAHHHH.`,
+          content: `🔥🔥🔥 DAMNNNNNN 🔥🔥🔥`,
           embeds: [
             {
               image: {
@@ -131,9 +131,8 @@ async function run() {
         }));
         
         await collection.bulkWrite(bulkOps);
-        const measurement = /Run|Running/i.test(update.workout) ? 'mi' : 'lbs'
         const message = updates.map(update => (
-          `**${update.user}** just increased ${update.user == "Ria" ? "her" : "his"} **${update.workout}** from **${update.old_weight} ${measurement}** to **${update.weight} ${measurement}**!`
+          `**${update.user}** just increased ${update.user == "Ria" ? "her" : "his"} **${update.workout}** from **${update.old_weight} ${/Run|Running/i.test(update.workout) ? 'mi' : 'lbs'}** to **${update.weight} ${/Run|Running/i.test(update.workout) ? 'mi' : 'lbs'}**!`
         )).join('\n\n');
         let imageURL;
         if (message.includes("Ria") && message.includes("Neil")) {

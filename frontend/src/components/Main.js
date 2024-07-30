@@ -1,8 +1,7 @@
-import { Box, Typography, AppBar, Toolbar, IconButton, Tooltip, Snackbar, Alert } from '@mui/material';
-import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
+import { Box, Typography, AppBar, Toolbar, IconButton, Tooltip, Snackbar, Alert, Button } from '@mui/material';
 import React, { useState } from 'react';
 import EditableTable from './EditableTable';
-
+import Header from './Header';
 
 const Main = () => {
   const [alertOpen, setAlertOpen] = useState(false);
@@ -18,6 +17,7 @@ const Main = () => {
   const handleCloseAlert = () => {
     setAlertOpen(false);
   };
+
   return (
     <Box sx={{ backgroundColor: '#dde6d5'}}>
       <Snackbar open={alertOpen} autoHideDuration={6000} onClose={handleCloseAlert}>
@@ -25,26 +25,7 @@ const Main = () => {
           {alertMessage}
         </Alert>
       </Snackbar>
-      <AppBar position="static">
-        <Toolbar sx={{ backgroundColor: '#dde6d5'}}>
-          <IconButton
-            size="large"
-            edge="start"
-            color="black"
-            aria-label="menu"
-            sx={{ mr: 2 }}
-          >
-            <FitnessCenterIcon />
-          </IconButton>
-          
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} color={"black"} fontSize={36}>
-              <Tooltip fontSize={48} title="n. a British-colonial term for sports club" arrow>
-                GymKhanna
-              </Tooltip>
-            </Typography>
-          
-        </Toolbar>
-      </AppBar>
+      <Header/>
       <Box sx={{minWidth: "80%"}}>
         <EditableTable onShowAlert={handleOpenAlert} />
       </Box>

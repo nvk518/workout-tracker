@@ -57,7 +57,6 @@ const WorkoutLineChart = ({ workoutData }) => {
         .sort((a, b) => new Date(a) - new Date(b))
         .map(date => ({ x: date, y: riaHistory.dateMap[date] }));
 
-      // Calculate Neil's statistics
       if (neilHistory.weights_series.length > 0) {
         const meanValue = neilHistory.weights_series.reduce((sum, value) => sum + value, 0) / neilHistory.weights_series.length;
         const sortedWeights = [...neilHistory.weights_series].sort((a, b) => a - b);
@@ -73,7 +72,6 @@ const WorkoutLineChart = ({ workoutData }) => {
         setNeilRange(rangeValue);
       }
 
-      // Calculate Ria's statistics
       if (riaHistory.weights_series.length > 0) {
         const meanValue = riaHistory.weights_series.reduce((sum, value) => sum + value, 0) / riaHistory.weights_series.length;
         const sortedWeights = [...riaHistory.weights_series].sort((a, b) => a - b);
@@ -89,7 +87,6 @@ const WorkoutLineChart = ({ workoutData }) => {
         setRiaRange(rangeValue);
       }
 
-      // Generate all dates between startDate and endDate
       const allDates = [];
       const startDate = new Date(Math.min(
         ...neilData.map(d => new Date(d.x)),
@@ -105,7 +102,6 @@ const WorkoutLineChart = ({ workoutData }) => {
 
       setXLabels(allDates);
 
-      // Create series data with null for missing dates
       const createSeriesData = (data, dates) => {
         const dataMap = new Map(data.map(d => [d.x, d.y]));
         return dates.map(date => dataMap.get(date) || null);
@@ -127,10 +123,10 @@ const WorkoutLineChart = ({ workoutData }) => {
     <Card variant="outlined">
       <Stack
         direction={{ xs: 'column', md: 'row' }}
-        spacing={8} // Increased spacing for better layout
+        spacing={8}
         sx={{ width: '100%', mx: 'auto', my: 2 }}
         textAlign="center"
-        alignItems="center" // Center align items
+        alignItems="center"
       >
         <Box minWidth={300} maxWidth={500}>
           <Typography fontSize={20} fontWeight={700}>{workoutData.exercise}</Typography>

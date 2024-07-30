@@ -219,10 +219,6 @@ const EditableTable = ({ onShowAlert }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  // if (loading) {
-  //   return <div>Loading...</div>;
-  // }
-
   return (
       <>
         <Backdrop

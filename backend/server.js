@@ -12,9 +12,20 @@ const fs = require('fs');
 const app = express();
 app.use(bodyParser.json());
 
+const allowedOrigins = [
+  process.env.FRONTEND_URL || 'http://localhost:1344',
+  'https://gymkhanna.space',
+];
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:1344', // Replace with your frontend URL
-  // origin: 'http://localhost:1344',
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
   credentials: true,
 }));
 

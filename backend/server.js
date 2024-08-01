@@ -14,6 +14,7 @@ app.use(bodyParser.json());
 
 const allowedOrigins = [
   process.env.FRONTEND_URL || 'http://localhost:1344',
+  'https://www.gymkhanna.space',
   'https://gymkhanna.space',
 ];
 

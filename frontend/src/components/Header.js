@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Typography, useMediaQuery, Box, useTheme, AppBar, Toolbar, IconButton, Tooltip, Button, Menu, MenuItem } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import MenuIcon from '@mui/icons-material/Menu';
 
 const Header = () => {
@@ -23,7 +22,7 @@ const Header = () => {
             <Toolbar sx={{ backgroundColor: '#dde6d5' }}>
                 <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} color="black" fontSize={36} onClick={() => navigate('/')}>
                     <Tooltip title="n. a British Raj term for sports club" arrow>
-                        <img src="/logo_gymkhanna.png" alt="gymkhanna" style={{ height: '70px', width: '70px', verticalAlign: 'middle' }} />
+                        <img src="/logo_gymkhanna.png" alt="gymkhanna" style={{ height: '70px', width: '70px', verticalAlign: 'middle', borderRadius: '50%' }} />
                     </Tooltip>
                 </Typography>
                 

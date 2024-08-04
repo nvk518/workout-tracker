@@ -54,10 +54,10 @@ const Header = () => {
                     onClose={handleClose}
                 >
                     <MenuItem onClick={() => { handleClose(); navigate('/'); }}>Home</MenuItem>
-                    <MenuItem onClick={() => { handleClose(); navigate('/rewards'); }}>Rewards</MenuItem>
+                    <MenuItem onClick={() => { handleClose(); navigate('/rewards'); }}>Achievements</MenuItem>
                     <MenuItem onClick={() => { handleClose(); navigate('/history'); }}>History</MenuItem>
                 </Menu></Box>) : (<Box><Button onClick={() => navigate('/')}>Home</Button>
-          <Button onClick={() => navigate('/rewards')}>Rewards</Button>
+          <Button onClick={() => navigate('/rewards')}>Achievements</Button>
           <Button onClick={() => navigate('/history')}>History</Button></Box>)
                 }
                 

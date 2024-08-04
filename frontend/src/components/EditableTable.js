@@ -23,8 +23,10 @@ const EditableTable = ({ onShowAlert }) => {
   const [selectedWorkout, setSelectedWorkout] = useState(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [file, setFile] = useState(null);
+
   // const API_BASE_URL = 'https://perfect-dog-supposedly.ngrok-free.app';
   const API_BASE_URL = 'https://workout-tracker-hdq7.onrender.com';
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -186,8 +188,8 @@ const EditableTable = ({ onShowAlert }) => {
       setExercises(allExercises);
       setWorkouts(latestWorkouts);
       setEditData(formatEditData(latestWorkouts));
-      setNewExercise({ exercise: '', Neil: '', Ria: '' });  // Reset new exercise fields
-      setIsAddModalOpen(false); // Close the modal after adding
+      setNewExercise({ exercise: '', Neil: '', Ria: '' }); 
+      setIsAddModalOpen(false); 
     } catch (error) {
       console.error('Error adding new exercise:', error);
       onShowAlert('Error adding new exercise.', 'error');

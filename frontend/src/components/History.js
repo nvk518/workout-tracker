@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import {
   Paper, Table, TableBody, TableCell, Backdrop, TableContainer,
-  TableHead, TablePagination, TableRow, CircularProgress, Box
+  TableHead, TablePagination, TableRow, CircularProgress, Box,
+  Typography
 } from '@mui/material';
 import Header from './Header';
 
@@ -28,7 +29,6 @@ const History = () => {
         const response = await axios.get(`${API_BASE_URL}/workouts`);
         let workoutData = response.data;
 
-        // Sort the workout data by date_edited, with the most recent first
         workoutData.sort((a, b) => new Date(b.date_edited) - new Date(a.date_edited));
 
         setData(workoutData);
@@ -61,6 +61,7 @@ const History = () => {
         >
           <CircularProgress color="inherit" />
         </Backdrop>   
+        <Typography fontSize={24} gutterBottom>Our History</Typography>
           <Paper sx={{ width: '100%', overflow: 'hidden' }}>
             <TableContainer sx={{ maxHeight: 440 }}>
               <Table stickyHeader aria-label="sticky table">

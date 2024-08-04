@@ -3,7 +3,7 @@ require('dotenv').config(); // Load environment variables at the very beginning
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const axios = require('axios');
 const multer = require('multer');
 const path = require('path');
@@ -17,6 +17,10 @@ const allowedOrigins = [
   'https://www.gymkhanna.space',
   'https://gymkhanna.space',
 ];
+
+// const allowedOrigins = [
+//   'http://localhost:1344',
+// ];
 
 app.use(cors({
   origin: function (origin, callback) {
@@ -60,6 +64,62 @@ const upload = multer({ storage });
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+const calculateStreak = (data, user, milestone) => {
+  const userWorkouts = data.filter(workout => workout.user === user).sort((a, b) => new Date(a.date_edited) - new Date(b.date_edited));
+  let streak = 0;
+  let maxStreak = 0;
+
+  userWorkouts.forEach((workout, index) => {
+    if (index === 0) {
+      streak = 1;
+    } else {
+      const prevDate = new Date(userWorkouts[index - 1].date_edited);
+      const currDate = new Date(workout.date_edited);
+      const diffInDays = (currDate - prevDate) / (1000 * 60 * 60 * 24);
+
+      if (diffInDays === 1) {
+        streak++;
+      } else {
+        streak = 1;
+      }
+
+      maxStreak = Math.max(maxStreak, streak);
+    }
+  });
+
+  return Math.min(maxStreak / milestone, 1) * 100;
+};
+
+const calculateProgress = (data, condition, number, type, workout, user) => {
+  let progress = 0;
+  if (type === 'streak') {
+    progress = calculateStreak(data, user, number);
+  } else if (type === 'weight') {
+    const totalWeight = data
+      .filter(d => d.user === user && d.workout === workout)
+      .reduce((total, d) => total + Number(d.weight), 0);
+    console.log(totalWeight, d)
+    switch (condition) {
+      case '>=':
+        progress = totalWeight >= number ? 100 : (totalWeight / number) * 100;
+        break;
+      case '>':
+        progress = totalWeight > number ? 100 : (totalWeight / number) * 100;
+        break;
+      case '=':
+        progress = totalWeight === number ? 100 : 0;
+        break;
+      case '<=':
+        progress = totalWeight <= number ? 100 : (1 - (totalWeight - number) / number) * 100;
+        break;
+      case '<':
+        progress = totalWeight < number ? 100 : (1 - (totalWeight - number) / number) * 100;
+        break;
+    }
+  }
+  return progress;
+};
+
 
 async function run() {
   try {
@@ -69,6 +129,7 @@ async function run() {
 
     const db = client.db('workout_tracker');
     const collection = db.collection('workouts');
+    const rewardsCollection = db.collection('rewards');
 
     app.post('/upload', upload.single('image'), async (req, res) => {
       try {
@@ -172,7 +233,61 @@ async function run() {
         res.status(500).json({ error: 'Internal server error' });
       }
     });
-    
+
+    // Rewards API
+    app.get('/rewards', async (req, res) => {
+      try {
+        const rewards = await rewardsCollection.find({}).toArray();
+        res.status(200).json(rewards);
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal server error' });
+      }
+    });
+
+    app.post('/rewards', async (req, res) => {
+      const { title, description, reward, claimed, badge, condition, number, type, workout, user } = req.body;
+      try {
+        const workoutData = await collection.find({ user }).toArray();
+        const progress = calculateProgress(workoutData, condition, number, type, workout, user);
+
+        const result = await rewardsCollection.insertOne({ title, description, progress, reward, claimed, badge, condition, number, type, workout, user });
+        res.status(201).json({ id: result.insertedId });
+      } catch (err) {
+        console.error('Error creating reward:', err);
+        res.status(500).json({ error: 'Internal server error' });
+      }
+    });
+
+    app.put('/rewards/:id', async (req, res) => {
+      const { id } = req.params;
+      const { title, description, reward, claimed, badge, condition, number, type, workout, user } = req.body;
+      try {
+        const workoutData = await collection.find({ user }).toArray();
+        const progress = calculateProgress(workoutData, condition, number, type, workout, user);
+
+        const result = await rewardsCollection.updateOne(
+          { _id: new ObjectId(id) },
+          { $set: { title, description, progress, reward, claimed, badge, condition, number, type, workout, user } }
+        );
+        res.status(200).json({ modifiedCount: result.modifiedCount });
+      } catch (err) {
+        console.error('Error updating reward:', err);
+        res.status(500).json({ error: 'Internal server error' });
+      }
+    });
+
+    app.delete('/rewards/:id', async (req, res) => {
+      const { id } = req.params;
+      try {
+        const result = await rewardsCollection.deleteOne({ _id: new ObjectId(id) });
+        res.status(200).json({ deletedCount: result.deletedCount });
+      } catch (err) {
+        console.error('Error deleting reward:', err);
+        res.status(500).json({ error: 'Internal server error' });
+      }
+    });
+
     const port = process.env.PORT || 3001;
     app.listen(port, () => {
       console.log('Server running on port 3001');
@@ -183,5 +298,7 @@ async function run() {
     // await client.close();
   }
 }
+
+
 
 run().catch(console.dir);

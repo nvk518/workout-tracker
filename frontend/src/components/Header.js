@@ -32,8 +32,8 @@ const Header = () => {
                 </IconButton>
 
                 <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} color="black" fontSize={36}>
-                    <Tooltip title="n. a British-colonial term for sports club" arrow>
-                        GymKhanna
+                    <Tooltip title="n. a British Raj term for sports club" arrow>
+                        gymkhanna
                     </Tooltip>
                 </Typography>
 

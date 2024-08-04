@@ -9,6 +9,7 @@ const Header = () => {
     const [anchorEl, setAnchorEl] = useState(null);
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -32,34 +33,40 @@ const Header = () => {
                 </IconButton>
 
                 <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} color="black" fontSize={36}>
-                  <Tooltip title="n. a British Raj term for sports club" arrow>
-                    <img src="/logo_gymkhanna_2.png" alt="gymkhanna" style={{ height: '36px', verticalAlign: 'middle' }} />
-                  </Tooltip>
+                    <Tooltip title="n. a British Raj term for sports club" arrow>
+                        <img src="/logo_gymkhanna_2.png" alt="gymkhanna" style={{ height: '36px', width: '71px', verticalAlign: 'middle' }} />
+                    </Tooltip>
                 </Typography>
-                
-                {
-                  isMobile ? (<Box><IconButton
-                    size="large"
-                    edge="end"
-                    color="black"
-                    aria-label="menu"
-                    sx={{ mr: 2 }}
-                    onClick={handleClick}
-                >
-                    <MenuIcon />
-                </IconButton><Menu
-                    anchorEl={anchorEl}
-                    open={Boolean(anchorEl)}
-                    onClose={handleClose}
-                >
-                    <MenuItem onClick={() => { handleClose(); navigate('/'); }}>Home</MenuItem>
-                    <MenuItem onClick={() => { handleClose(); navigate('/rewards'); }}>Achievements</MenuItem>
-                    <MenuItem onClick={() => { handleClose(); navigate('/history'); }}>History</MenuItem>
-                </Menu></Box>) : (<Box><Button onClick={() => navigate('/')}>Home</Button>
-          <Button onClick={() => navigate('/rewards')}>Achievements</Button>
-          <Button onClick={() => navigate('/history')}>History</Button></Box>)
-                }
-                
+
+                {isMobile ? (
+                    <Box>
+                        <IconButton
+                            size="large"
+                            edge="end"
+                            color="black"
+                            aria-label="menu"
+                            sx={{ mr: 2 }}
+                            onClick={handleClick}
+                        >
+                            <MenuIcon />
+                        </IconButton>
+                        <Menu
+                            anchorEl={anchorEl}
+                            open={Boolean(anchorEl)}
+                            onClose={handleClose}
+                        >
+                            <MenuItem onClick={() => { handleClose(); navigate('/'); }}>Home</MenuItem>
+                            <MenuItem onClick={() => { handleClose(); navigate('/rewards'); }}>Achievements</MenuItem>
+                            <MenuItem onClick={() => { handleClose(); navigate('/history'); }}>History</MenuItem>
+                        </Menu>
+                    </Box>
+                ) : (
+                    <Box>
+                        <Button onClick={() => navigate('/')}>Home</Button>
+                        <Button onClick={() => navigate('/rewards')}>Achievements</Button>
+                        <Button onClick={() => navigate('/history')}>History</Button>
+                    </Box>
+                )}
             </Toolbar>
         </AppBar>
     );

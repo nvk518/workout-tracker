@@ -34,7 +34,7 @@ const Header = () => {
 
                 <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} color="black" fontSize={36}>
                     <Tooltip title="n. a British Raj term for sports club" arrow>
-                        <img src="/logo_gymkhanna_2.png" alt="gymkhanna" style={{ height: '100px', width: '196px', verticalAlign: 'middle' }} />
+                        <img src="/logo_gymkhanna_2.png" alt="gymkhanna" style={{ height: '50px', width: '98px', verticalAlign: 'middle' }} />
                     </Tooltip>
                 </Typography>
 

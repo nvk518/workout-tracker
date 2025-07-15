@@ -79,14 +79,18 @@ const History = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((workout, index) => (
-                    <TableRow hover role="checkbox" tabIndex={-1} key={index}>
-                      <TableCell>{new Date(workout.date_edited).toLocaleString()}</TableCell>
-                      <TableCell>{workout.workout}</TableCell>
-                      <TableCell>{workout.user}</TableCell>
-                      <TableCell align="right">{workout.weight}</TableCell>
-                    </TableRow>
-                  ))}
+                  {data
+                    .filter(workout => workout.weight !== '' && workout.weight !== 0)
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((workout, index) => (
+                      <TableRow hover role="checkbox" tabIndex={-1} key={index}>
+                        <TableCell>{new Date(workout.date_edited).toLocaleString()}</TableCell>
+                        <TableCell>{workout.workout}</TableCell>
+                        <TableCell>{workout.user}</TableCell>
+                        <TableCell align="right">{workout.weight}</TableCell>
+                      </TableRow>
+                    ))
+                  }
                 </TableBody>
               </Table>
             </TableContainer>

@@ -242,59 +242,63 @@ const EditableTable = ({ onShowAlert }) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {workouts.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((workout) => (
-                <TableRow hover role="checkbox" tabIndex={-1} key={workout.exercise} onClick={() => handleWorkoutSelect(workout.exercise)}>
-                  <TableCell sx={{ fontSize: '1rem', fontWeight: 'bold', width: "150px" }}>{workout.exercise}</TableCell>
-                  <TableCell>
+              {workouts
+                .sort((a, b) => a.exercise.localeCompare(b.exercise))
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((workout) => (
+                  <TableRow hover role="checkbox" tabIndex={-1} key={workout.exercise} onClick={() => handleWorkoutSelect(workout.exercise)}>
+                    <TableCell sx={{ fontSize: '1rem', fontWeight: 'bold', width: "150px" }}>{workout.exercise}</TableCell>
+                    <TableCell>
+                      <TextField
+                        value={editData[workout.exercise]?.Ria || ''}
+                        onChange={(e) => handleChange(workout.exercise, 'Ria', e.target.value)}
+                        sx={{ width: "150px" }}
+                        variant="standard"
+                        label={/Run|Running/i.test(workout.exercise) ? 'Distance (mi)' : 'Weight (lbs)'}
+                      />
+                    </TableCell>
+                    <TableCell>
                     <TextField
-                      value={editData[workout.exercise]?.Ria || ''}
-                      onChange={(e) => handleChange(workout.exercise, 'Ria', e.target.value)}
+                      value={editData[workout.exercise]?.Neil || ''}
+                      onChange={(e) => handleChange(workout.exercise, 'Neil', e.target.value)}
                       sx={{ width: "150px" }}
                       variant="standard"
                       label={/Run|Running/i.test(workout.exercise) ? 'Distance (mi)' : 'Weight (lbs)'}
                     />
-                  </TableCell>
-                  <TableCell>
-                  <TextField
-                    value={editData[workout.exercise]?.Neil || ''}
-                    onChange={(e) => handleChange(workout.exercise, 'Neil', e.target.value)}
-                    sx={{ width: "150px" }}
-                    variant="standard"
-                    label={/Run|Running/i.test(workout.exercise) ? 'Distance (mi)' : 'Weight (lbs)'}
-                  />
-                  </TableCell>
-                  <TableCell>
-                    <Accordion>
-                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography>View Details</Typography>
-                      </AccordionSummary>
-                      <AccordionDetails>
-                        <Typography variant="body2" style={{ marginTop: '10px' }}>
-                          <strong>Ria's Progress:</strong>
-                          {workout.RiaHistory.slice(0,10).map((entry, index) => (entry.weight !== "" && entry.weight !== "0") ? (
-                            <div key={index}>
-                              {new Date(entry.date_edited).toLocaleDateString()}: {entry.weight} {/Run|Running/i.test(workout.exercise) ? 'mi' : 'lbs'}
-                            </div>
-                          ) : "")}
-                        </Typography>
-                        <Typography variant="body2">
-                          <strong>Neil's Progress:</strong>
-                          {workout.NeilHistory.slice(0,10).map((entry, index) => (entry.weight !== "" && entry.weight !== "0") ? (
-                            <div key={index}>
-                              {new Date(entry.date_edited).toLocaleDateString()}: {entry.weight} {/Run|Running/i.test(workout.exercise) ? 'mi' : 'lbs'}
-                            </div>
-                          ) : "")}
-                        </Typography>
-                      </AccordionDetails>
-                    </Accordion>
-                  </TableCell>
-                </TableRow>
-              ))}
+                    </TableCell>
+                    <TableCell>
+                      <Accordion>
+                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                          <Typography>View Details</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                          <Typography variant="body2" style={{ marginTop: '10px' }}>
+                            <strong>Ria's Progress:</strong>
+                            {workout.RiaHistory.slice(0,10).map((entry, index) => (entry.weight !== "" && entry.weight !== "0") ? (
+                              <div key={index}>
+                                {new Date(entry.date_edited).toLocaleDateString()}: {entry.weight} {/Run|Running/i.test(workout.exercise) ? 'mi' : 'lbs'}
+                              </div>
+                            ) : "")}
+                          </Typography>
+                          <Typography variant="body2">
+                            <strong>Neil's Progress:</strong>
+                            {workout.NeilHistory.slice(0,10).map((entry, index) => (entry.weight !== "" && entry.weight !== "0") ? (
+                              <div key={index}>
+                                {new Date(entry.date_edited).toLocaleDateString()}: {entry.weight} {/Run|Running/i.test(workout.exercise) ? 'mi' : 'lbs'}
+                              </div>
+                            ) : "")}
+                          </Typography>
+                        </AccordionDetails>
+                      </Accordion>
+                    </TableCell>
+                  </TableRow>
+                ))
+              }
             </TableBody>
           </Table>
         </TableContainer>
         <TablePagination
-          rowsPerPageOptions={[10, 25, 100]}
+          rowsPerPageOptions={[25, 50]}
           component="div"
           count={workouts.length}
           rowsPerPage={rowsPerPage}

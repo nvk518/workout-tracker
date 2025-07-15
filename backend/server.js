@@ -139,18 +139,30 @@ async function run() {
 
         const image = req.file;
         const imageUrl = `${req.protocol}://${req.get('host')}/uploads/${image.filename}`;
-
-        await axios.post(discordWebhookUrl, {
-          content: `🔥🔥🔥 DAMNNNNNN 🔥🔥🔥`,
-          embeds: [
-            {
-              image: {
-                url: imageUrl
+        try {
+          await axios.post(discordWebhookUrl, {
+            content: `🔥🔥🔥 DAMNNNNNN 🔥🔥🔥`,
+            embeds: [
+              {
+                image: {
+                  url: imageUrl
+                }
               }
-            }
-          ]
-        });
-
+            ]
+          });
+        } catch (discordError) {
+          console.error('Error sending to Discord webhook:', discordError.message);
+          if (axios.isAxiosError(discordError) && discordError.response) {
+            console.error('Discord Response Status:', discordError.response.status);
+            console.error('Discord Response Body:', discordError.response.data);
+            return res.status(202).json({
+              message: 'File uploaded successfully, but failed to send notification to Discord.',
+              url: imageUrl,
+              discordError: 'Could not reach Discord service.',
+              discordResponse: discordError.response.data
+            });
+          }
+        }
         res.status(200).json({ message: 'File uploaded successfully', url: imageUrl });
       } catch (err) {
         console.error('Error uploading file:', err);
@@ -215,17 +227,30 @@ async function run() {
         } else if (message.includes("Neil")) {
           imageURL = "https://d3gz42uwgl1r1y.cloudfront.net/ca/caseyljones/submission/2018/06/096617ad26f0a638e0d413b0b4a3dbc5/2500x1500.jpg";
         }
-        
-        await axios.post(discordWebhookUrl, {
-          content: `Workout Updates:\n\n${message}`,
-          embeds: [
-            {
-              image: {
-                url: imageURL
+        try {
+          await axios.post(discordWebhookUrl, {
+            content: `Workout Updates:\n\n${message}`,
+            embeds: [
+              {
+                image: {
+                  url: imageURL
+                }
               }
-            }
-          ]
-        });
+            ]
+          });
+        } catch (discordError) {
+          console.error('Error sending to Discord webhook:', discordError.message);
+          if (axios.isAxiosError(discordError) && discordError.response) {
+            console.error('Discord Response Status:', discordError.response.status);
+            console.error('Discord Response Body:', discordError.response.data);
+            return res.status(202).json({
+              message: 'Workout data updated successfully, but failed to send notification to Discord.',
+              url: imageUrl,
+              discordError: 'Could not reach Discord service.',
+              discordResponse: discordError.response.data
+            });
+          }
+        }
 
         res.status(200).json({ message: 'Workouts updated successfully' });
       } catch (err) {

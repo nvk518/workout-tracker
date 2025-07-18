@@ -35,7 +35,7 @@ const WorkoutLineChart = ({ workoutData }) => {
       }
     });
 
-    const weights_series = history.map(d => Number(d.weight)).filter(weight => !isNaN(weight));
+    const weights_series = history.map(d => Number(d.weight)).filter(weight => !isNaN(weight) && weight > 0);
 
     return { dateMap, weights_series };
   };
